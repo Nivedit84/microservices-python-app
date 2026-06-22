@@ -6,7 +6,18 @@ from auth_svc import access
 from storage import util
 from bson.objectid import ObjectId
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from prometheus_client import Counter
+from prometheus_client import make_wsgi_app
 
+login_requests_total = Counter(
+    "login_requests_total",
+    "Total login requests"
+)
+
+upload_requests_total = Counter(
+    "upload_requests_total",
+    "Total upload requests"
+)
 server = Flask(__name__)
 
 mongo_video = PyMongo(server, uri=os.environ.get('MONGODB_VIDEOS_URI'))
@@ -22,6 +33,7 @@ channel = connection.channel()
 @server.route("/login", methods=["POST"])
 def login():
     token, err = access.login(request)
+    login_requests_total.inc()
 
     if not err:
         return token
@@ -31,9 +43,9 @@ def login():
 @server.route("/upload", methods=["POST"])
 def upload():
     access, err = validate.token(request)
-
+    upload_requests_total.inc()
     if err:
-        unauth_count.inc()
+        print(err)
         return err
 
     access = json.loads(access)
@@ -76,6 +88,13 @@ def download():
             return "internal server error", 500
 
     return "not authorized", 401
+
+server.wsgi_app = DispatcherMiddleware(
+    server.wsgi_app,
+    {
+        "/metrics": make_wsgi_app()
+    }
+)
 
 
 if __name__ == "__main__":
