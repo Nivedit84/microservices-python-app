@@ -7,326 +7,199 @@ Converting mp4 videos to mp3 in a microservices architecture.
   <img src="./Project documentation/ProjectArchitecture.png" width="600" title="Architecture" alt="Architecture">
   </p>
 
-This project demonstrates the implementation of a complete observability stack for a microservices-based video conversion platform running on Kubernetes.
+📌 Overview
 
-The application converts MP4 videos into MP3 files using multiple interconnected services deployed on Amazon EKS. The primary objective of this project is to design, deploy, and operate a production-style observability platform covering metrics, logs, traces, dashboards, and alerting.
+This project focuses on building a production-style observability platform for a microservices-based video conversion application running on Kubernetes.
 
-The platform provides:
+The application converts MP4 videos into MP3 files using multiple Python services communicating through RabbitMQ and backed by MongoDB and PostgreSQL.
 
-Metrics collection using Prometheus
-Visualization using Grafana
-Log aggregation using Loki
-Distributed tracing using OpenTelemetry and Tempo
-Alerting using Alertmanager
-Kubernetes workload monitoring
-Application performance monitoring for microservices
+The primary goal is to gain hands-on experience with modern observability practices including metrics collection, distributed tracing, dashboarding, alerting, and Kubernetes monitoring.
 
-Application Components
-
-The application consists of:
-
+🏗️ Application Architecture
+Microservices
+Service	Purpose
+Gateway Service	Entry point for uploads and downloads
+Auth Service	Authentication and authorization
+Converter Service	Converts MP4 files to MP3
+Notification Service	Sends email notifications
+RabbitMQ	Message broker between services
+MongoDB	Stores converted files metadata
+PostgreSQL	Stores authentication data
+Request Flow
+User
+  │
+  ▼
 Gateway Service
+  │
+  ▼
 Auth Service
-Converter Service
-Notification Service
+  │
+  ▼
 RabbitMQ
-MongoDB
-PostgreSQL
-
-Application flow:
-
-User Uploads Video
-
-↓
-
-Gateway Service
-
-↓
-
-Auth Service
-
-↓
-
-RabbitMQ
-
-↓
-
+  │
+  ▼
 Converter Service
-
-↓
-
+  │
+  ▼
 MongoDB
-
-↓
-
+  │
+  ▼
 Notification Service
-
-↓
-
+  │
+  ▼
 Email Notification
-
-Observability Architecture
-
-Metrics Flow
-
-Application Pods
-
-↓
-
-/metrics Endpoint
-
-↓
-
-ServiceMonitor
-
-↓
-
-Prometheus
-
-↓
-
-Grafana
-
-Logs Flow
-
-Application Pods
-
-↓
-
-Promtail
-
-↓
-
-Loki
-
-↓
-
-Grafana
-
-Tracing Flow
-
-Application Services
-
-↓
-
-OpenTelemetry SDK
-
-↓
-
-OpenTelemetry Collector
-
-↓
-
-Tempo
-
-↓
-
-Grafana
-
-Alerting Flow
-
-Prometheus Rules
-
-↓
-
-Alertmanager
-
-↓
-
-Email / Slack Notifications
-
-Technology Stack
+🔭 Observability Architecture
+                 ┌─────────────────┐
+                 │   Grafana       │
+                 └────────┬────────┘
+                          │
+          ┌───────────────┼───────────────┐
+          │                               │
+          ▼                               ▼
+    Prometheus                      Jaeger
+          ▲                               ▲
+          │                               │
+   ServiceMonitor                 OTel Collector
+          ▲                               ▲
+          │                               │
+    Application Pods ─────────────────────┘
+⚙️ Technology Stack
 Platform
-Amazon EKS
 Kubernetes
+Amazon EKS
 Helm
 Docker
 Application
-Python Microservices
+Python
 RabbitMQ
 MongoDB
 PostgreSQL
 Observability
 Prometheus
 Grafana
-Loki
-Promtail
-Alertmanager
+OpenTelemetry
 OpenTelemetry Collector
-Tempo
+Jaeger
 kube-state-metrics
 node-exporter
-Observability Objectives
-
-This project focuses on implementing:
-
-Metrics
-
-Monitor:
-
-HTTP request rate
-Request latency
-Error rates
-CPU utilization
-Memory utilization
-Pod health
-Node health
-RabbitMQ metrics
-Logs
-
-Centralized log aggregation for:
-
+✅ Current Progress
 Gateway Service
-Auth Service
+
+Implemented:
+
+OpenTelemetry instrumentation
+Distributed tracing
+Prometheus metrics exposure
+ServiceMonitor integration
+Grafana dashboard
+
+Metrics collected:
+
+HTTP request count
+Request duration
+Error rate
+Request throughput
+
+Tracing:
+
+End-to-end request traces visible in Jaeger
+Trace propagation through service boundaries
 Converter Service
-Notification Service
-Traces
 
-Distributed tracing across:
+Implemented:
 
-Gateway → Auth → RabbitMQ → Converter → Database
+Prometheus metrics exposure
+ServiceMonitor integration
+Grafana dashboard
 
-Tracing helps identify:
+Metrics collected:
 
-Slow requests
-Service bottlenecks
-Database latency
-Failed requests
-Alerting
-
-Alerts configured for:
-
-High CPU usage
-High memory usage
-Pod restarts
-Service downtime
-Increased error rates
-RabbitMQ queue backlog
-Kubernetes Monitoring Components
-Prometheus
-
-Prometheus collects metrics from:
-
-Application Services
-Kubernetes Nodes
-Pods
-Deployments
-RabbitMQ
-MongoDB
-PostgreSQL
-
-Metrics are discovered using Kubernetes ServiceMonitors.
-
-Grafana
-
-Grafana dashboards include:
-
-Cluster Overview Dashboard
-Application Dashboard
+Conversion requests
+Conversion duration
+Success / failure count
+Worker performance metrics
+📊 Dashboards
 Gateway Dashboard
-RabbitMQ Dashboard
-Infrastructure Dashboard
-Loki
-
-Loki provides centralized logging for all Kubernetes workloads.
-
-OpenTelemetry
-
-OpenTelemetry is used to collect:
-
-Metrics
-Logs
-Traces
-
-Telemetry is routed through an OpenTelemetry Collector.
-
-Tempo
-
-Tempo stores and visualizes distributed traces.
-
-Alertmanager
-
-Alertmanager manages:
-
-Alert routing
-Deduplication
-Grouping
-Notification delivery
-Key Dashboards
-Infrastructure Dashboard
-
-Monitors:
-
-Node CPU
-Node Memory
-Disk Usage
-Network Traffic
-Application Dashboard
 
 Monitors:
 
 Requests per second
 Error rate
+Average response time
 P95 latency
-Active pods
-Service availability
-RabbitMQ Dashboard
+Request volume
+Converter Dashboard
 
 Monitors:
 
-Queue depth
-Consumer count
-Message rate
-Processing latency
-Troubleshooting Scenarios
-Target Down
+Conversion throughput
+Conversion latency
+Failed conversions
+Processing time
+📈 Metrics Collection Flow
+Application
+    │
+    ▼
+/metrics
+    │
+    ▼
+ServiceMonitor
+    │
+    ▼
+Prometheus
+    │
+    ▼
+Grafana Dashboard
+🔍 Distributed Tracing Flow
+Gateway Service
+      │
+      ▼
+OpenTelemetry SDK
+      │
+      ▼
+OTel Collector
+      │
+      ▼
+Jaeger
 
-Verify:
+Current tracing implementation is available for the Gateway Service and is used to analyze request latency and application behavior.
 
-ServiceMonitor configuration
-Kubernetes Service
-Endpoints
-Prometheus Targets page
-Missing Logs
-
-Verify:
-
-Promtail Pods
-Loki Health
-Log Labels
+🧪 Troubleshooting Scenarios Practiced
+Prometheus Target Down
+Validate ServiceMonitor
+Verify Service labels
+Check Endpoints
+Inspect Prometheus Targets page
+Missing Metrics
+Verify /metrics endpoint
+Check Prometheus scrape status
+Validate ServiceMonitor selectors
 Missing Traces
+Verify OTel Collector configuration
+Check exporter connectivity
+Inspect Jaeger traces
+🎯 Learning Outcomes
 
-Verify:
-
-OpenTelemetry Collector
-Tempo
-Trace Exporters
-Alerts Not Firing
-
-Verify:
-
-Alert Rules
-Prometheus Evaluation
-Alertmanager Routing
-Learning Outcomes
-
-Through this project I gained hands-on experience with:
+Through this project I am gaining hands-on experience with:
 
 Kubernetes Observability
 Prometheus Monitoring
-Grafana Dashboarding
+Grafana Dashboard Design
 OpenTelemetry Instrumentation
 Distributed Tracing
-Centralized Logging
-Alerting Strategies
-Kubernetes Troubleshooting
-Production Monitoring Design
-SRE and DevOps Best Practices
-Future Enhancements
-Thanos for long-term metrics storage
-Prometheus High Availability
-SLO and Error Budget Tracking
-GitOps deployment using ArgoCD
-Multi-cluster observability
-Synthetic monitoring
-Advanced alert routing
+Jaeger Tracing Analysis
+Kubernetes Service Discovery
+ServiceMonitor Configuration
+Production Monitoring Workflows
+DevOps and SRE Troubleshooting
+🚀 Upcoming Enhancements
+Instrument Auth Service
+Instrument Notification Service
+Centralized Logging with Loki
+Alertmanager Integration
+Slack Alerting
+SLO & Error Budget Dashboards
+Jaeger → Tempo Migration
+GitOps Deployment using ArgoCD
+Thanos for Long-Term Metrics Storage
+Multi-Service Distributed Tracing
