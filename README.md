@@ -24,12 +24,6 @@ This project is focused on learning and implementing modern observability practi
 
 ---
 
-## 🏗️ Architecture
-
-![Architecture](docs/architecture.png)
-
----
-
 ## 🔧 Technology Stack
 
 ### Platform
