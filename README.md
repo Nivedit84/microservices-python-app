@@ -7,199 +7,194 @@ Converting mp4 videos to mp3 in a microservices architecture.
   <img src="./Project documentation/ProjectArchitecture.png" width="600" title="Architecture" alt="Architecture">
   </p>
 
-📌 Overview
+# 🎥 Kubernetes Observability Platform
 
-This project focuses on building a production-style observability platform for a microservices-based video conversion application running on Kubernetes.
+Production-grade observability implementation for a microservices-based video conversion platform running on Kubernetes.
 
-The application converts MP4 videos into MP3 files using multiple Python services communicating through RabbitMQ and backed by MongoDB and PostgreSQL.
+## 🚀 Project Goals
 
-The primary goal is to gain hands-on experience with modern observability practices including metrics collection, distributed tracing, dashboarding, alerting, and Kubernetes monitoring.
+This project is focused on learning and implementing modern observability practices for cloud-native applications:
 
-🏗️ Application Architecture
-Microservices
-Service	Purpose
-Gateway Service	Entry point for uploads and downloads
-Auth Service	Authentication and authorization
-Converter Service	Converts MP4 files to MP3
-Notification Service	Sends email notifications
-RabbitMQ	Message broker between services
-MongoDB	Stores converted files metadata
-PostgreSQL	Stores authentication data
-Request Flow
-User
-  │
-  ▼
+- Metrics with Prometheus
+- Dashboards with Grafana
+- Distributed Tracing with OpenTelemetry
+- Trace Visualization with Jaeger
+- Kubernetes Monitoring
+- Service Discovery using ServiceMonitors
+
+---
+
+## 🏗️ Architecture
+
+![Architecture](docs/architecture.png)
+
+---
+
+## 🔧 Technology Stack
+
+### Platform
+- Kubernetes
+- Amazon EKS
+- Docker
+- Helm
+
+### Application
+- Python
+- RabbitMQ
+- MongoDB
+- PostgreSQL
+
+### Observability
+- Prometheus
+- Grafana
+- OpenTelemetry
+- OpenTelemetry Collector
+- Jaeger
+- kube-state-metrics
+- node-exporter
+
+---
+
+## 📊 Current Progress
+
+### Gateway Service
+
+✅ Prometheus Metrics
+
+✅ OpenTelemetry Instrumentation
+
+✅ Distributed Tracing
+
+✅ ServiceMonitor Integration
+
+✅ Grafana Dashboard
+
+### Converter Service
+
+✅ Prometheus Metrics
+
+✅ ServiceMonitor Integration
+
+✅ Grafana Dashboard
+
+⬜ OpenTelemetry Instrumentation
+
+⬜ Distributed Tracing
+
+### Planned
+
+⬜ Auth Service Instrumentation
+
+⬜ Notification Service Instrumentation
+
+⬜ Loki Logging
+
+⬜ Alertmanager
+
+⬜ Slack Alerts
+
+⬜ SLO Dashboards
+
+---
+
+## 📈 Gateway Dashboard
+
+![Gateway Dashboard](docs/screenshots/gateway-dashboard.png)
+
+### Metrics
+
+- Request Rate
+- Error Rate
+- Response Time
+- P95 Latency
+- Request Throughput
+
+---
+
+## 📈 Converter Dashboard
+
+![Converter Dashboard](docs/screenshots/converter-dashboard.png)
+
+### Metrics
+
+- Conversion Requests
+- Conversion Duration
+- Success Rate
+- Failure Rate
+- Processing Time
+
+---
+
+## 🔍 Distributed Tracing
+
+### Trace Flow
+
 Gateway Service
-  │
-  ▼
-Auth Service
-  │
-  ▼
-RabbitMQ
-  │
-  ▼
-Converter Service
-  │
-  ▼
-MongoDB
-  │
-  ▼
-Notification Service
-  │
-  ▼
-Email Notification
-🔭 Observability Architecture
-                 ┌─────────────────┐
-                 │   Grafana       │
-                 └────────┬────────┘
-                          │
-          ┌───────────────┼───────────────┐
-          │                               │
-          ▼                               ▼
-    Prometheus                      Jaeger
-          ▲                               ▲
-          │                               │
-   ServiceMonitor                 OTel Collector
-          ▲                               ▲
-          │                               │
-    Application Pods ─────────────────────┘
-⚙️ Technology Stack
-Platform
-Kubernetes
-Amazon EKS
-Helm
-Docker
-Application
-Python
-RabbitMQ
-MongoDB
-PostgreSQL
-Observability
-Prometheus
-Grafana
-OpenTelemetry
-OpenTelemetry Collector
-Jaeger
-kube-state-metrics
-node-exporter
-✅ Current Progress
-Gateway Service
 
-Implemented:
+↓
 
-OpenTelemetry instrumentation
-Distributed tracing
-Prometheus metrics exposure
-ServiceMonitor integration
-Grafana dashboard
-
-Metrics collected:
-
-HTTP request count
-Request duration
-Error rate
-Request throughput
-
-Tracing:
-
-End-to-end request traces visible in Jaeger
-Trace propagation through service boundaries
-Converter Service
-
-Implemented:
-
-Prometheus metrics exposure
-ServiceMonitor integration
-Grafana dashboard
-
-Metrics collected:
-
-Conversion requests
-Conversion duration
-Success / failure count
-Worker performance metrics
-📊 Dashboards
-Gateway Dashboard
-
-Monitors:
-
-Requests per second
-Error rate
-Average response time
-P95 latency
-Request volume
-Converter Dashboard
-
-Monitors:
-
-Conversion throughput
-Conversion latency
-Failed conversions
-Processing time
-📈 Metrics Collection Flow
-Application
-    │
-    ▼
-/metrics
-    │
-    ▼
-ServiceMonitor
-    │
-    ▼
-Prometheus
-    │
-    ▼
-Grafana Dashboard
-🔍 Distributed Tracing Flow
-Gateway Service
-      │
-      ▼
 OpenTelemetry SDK
-      │
-      ▼
+
+↓
+
 OTel Collector
-      │
-      ▼
+
+↓
+
 Jaeger
 
-Current tracing implementation is available for the Gateway Service and is used to analyze request latency and application behavior.
+![Jaeger Trace](docs/screenshots/jaeger-trace.png)
 
-🧪 Troubleshooting Scenarios Practiced
-Prometheus Target Down
-Validate ServiceMonitor
-Verify Service labels
-Check Endpoints
-Inspect Prometheus Targets page
-Missing Metrics
-Verify /metrics endpoint
-Check Prometheus scrape status
-Validate ServiceMonitor selectors
-Missing Traces
-Verify OTel Collector configuration
-Check exporter connectivity
-Inspect Jaeger traces
-🎯 Learning Outcomes
+---
+
+## 🛠️ Troubleshooting Scenarios
+
+### Prometheus Target Down
+
+- Verify ServiceMonitor
+- Verify Service Labels
+- Verify Endpoints
+- Check Prometheus Targets
+
+### Missing Metrics
+
+- Verify `/metrics` endpoint
+- Check scrape status
+- Validate ServiceMonitor selectors
+
+### Missing Traces
+
+- Verify OTel Collector
+- Verify Exporters
+- Check Jaeger
+
+---
+
+## 🎯 Learning Outcomes
 
 Through this project I am gaining hands-on experience with:
 
-Kubernetes Observability
-Prometheus Monitoring
-Grafana Dashboard Design
-OpenTelemetry Instrumentation
-Distributed Tracing
-Jaeger Tracing Analysis
-Kubernetes Service Discovery
-ServiceMonitor Configuration
-Production Monitoring Workflows
-DevOps and SRE Troubleshooting
-🚀 Upcoming Enhancements
-Instrument Auth Service
-Instrument Notification Service
-Centralized Logging with Loki
-Alertmanager Integration
-Slack Alerting
-SLO & Error Budget Dashboards
-Jaeger → Tempo Migration
-GitOps Deployment using ArgoCD
-Thanos for Long-Term Metrics Storage
-Multi-Service Distributed Tracing
+- Kubernetes Observability
+- Prometheus Monitoring
+- Grafana Dashboarding
+- OpenTelemetry
+- Distributed Tracing
+- Service Discovery
+- Kubernetes Troubleshooting
+- SRE Practices
+
+---
+
+## 🚧 Roadmap
+
+- [x] Gateway Metrics
+- [x] Gateway Tracing
+- [x] Converter Metrics
+- [ ] Converter Tracing
+- [ ] Auth Service Metrics
+- [ ] Notification Service Metrics
+- [ ] Loki Integration
+- [ ] Alertmanager
+- [ ] Slack Notifications
+- [ ] Tempo Migration
+- [ ] SLO & Error Budget Tracking
