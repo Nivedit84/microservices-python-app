@@ -20,7 +20,9 @@ spec:
     spec:
       containers:
         - name: converter
-          image: nasi101/converter
+          image: soninivedit74/converter:v1.1
+          ports:
+            - containerPort: 8000
           envFrom:
             - configMapRef:
                 name: converter-configmap

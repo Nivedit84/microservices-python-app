@@ -8,6 +8,33 @@ from bson.objectid import ObjectId
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from prometheus_client import Counter
 from prometheus_client import make_wsgi_app
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+
+resource = Resource.create({
+    "service.name": "gateway"
+})
+
+provider = TracerProvider(
+    resource=resource
+)
+
+trace.set_tracer_provider(provider)
+
+otlp_exporter = OTLPSpanExporter(
+    endpoint="otel-collector-opentelemetry-collector.tracing.svc.cluster.local:4317",
+    insecure=True
+)
+
+provider.add_span_processor(
+    BatchSpanProcessor(otlp_exporter)
+)
+
+tracer = trace.get_tracer(__name__)
 
 login_requests_total = Counter(
     "login_requests_total",
@@ -19,6 +46,7 @@ upload_requests_total = Counter(
     "Total upload requests"
 )
 server = Flask(__name__)
+FlaskInstrumentor().instrument_app(server)
 
 mongo_video = PyMongo(server, uri=os.environ.get('MONGODB_VIDEOS_URI'))
 
