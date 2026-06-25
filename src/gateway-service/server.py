@@ -14,6 +14,22 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
+import logging
+import sys
+from pythonjsonlogger import jsonlogger
+
+logger = logging.getLogger("gateway")
+logger.setLevel(logging.INFO)
+
+handler = logging.StreamHandler(sys.stdout)
+
+formatter = jsonlogger.JsonFormatter(
+    "%(asctime)s %(levelname)s %(name)s %(message)s"
+)
+
+handler.setFormatter(formatter)
+
+logger.addHandler(handler)
 
 resource = Resource.create({
     "service.name": "gateway"
@@ -62,18 +78,36 @@ channel = connection.channel()
 def login():
     token, err = access.login(request)
     login_requests_total.inc()
+    logger.info(
+    "Login request received"
+    )
 
     if not err:
+        logger.info(
+        "User authenticated successfully"
+        )
         return token
     else:
+        logger.warning(
+        "Authentication failed"
+        )
         return err
 
 @server.route("/upload", methods=["POST"])
 def upload():
     access, err = validate.token(request)
     upload_requests_total.inc()
+    logger.info(
+    "Video uploaded and message published"
+)
     if err:
-        print(err)
+        logger.warning(
+    "Token validation failed",
+    
+    extra={
+        "endpoint": "/upload"
+    }
+        )
         return err
 
     access = json.loads(access)
@@ -98,6 +132,10 @@ def download():
 
     if err:
         unauth_count.inc()
+        logger.warning(
+            "Failed to download MP3"
+        )
+
         return err
 
     access = json.loads(access)
@@ -111,8 +149,10 @@ def download():
         try:
             out = fs_mp3s.get(ObjectId(fid_string))
             return send_file(out, download_name=f"{fid_string}.mp3")
-        except Exception as err:
-            print(err)
+        except Exception:
+            logger.exception(
+                "Failed retrieving MP3 from GridFS"
+            )
             return "internal server error", 500
 
     return "not authorized", 401

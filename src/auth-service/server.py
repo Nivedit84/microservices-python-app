@@ -1,8 +1,11 @@
 import jwt, datetime, os
 import psycopg2
 from flask import Flask, request
+from prometheus_flask_exporter import PrometheusMetrics
+from prometheus_client import Counter
 
 server = Flask(__name__)
+metrics = PrometheusMetrics(server)
 
 def get_db_connection():
     conn = psycopg2.connect(host=os.getenv('DATABASE_HOST'),
@@ -12,6 +15,20 @@ def get_db_connection():
                             port=5432)
     return conn
 
+login_requests = Counter(
+    "auth_login_requests_total",
+    "Total login requests"
+)
+
+login_failures = Counter(
+    "auth_login_failures_total",
+    "Failed login attempts"
+)
+
+jwt_generated = Counter(
+    "jwt_generated_total",
+    "JWT tokens issued"
+)
 
 @server.route('/login', methods=['POST'])
 def login():

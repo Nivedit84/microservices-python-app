@@ -20,7 +20,9 @@ spec:
     spec:
       containers:
         - name: notification
-          image: nasi101/notification
+          image: soninivedit74/notification:v1.0
+          ports:
+            - containerPort: 8000
           envFrom:
             - configMapRef:
                 name: notification-configmap

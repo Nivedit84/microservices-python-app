@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: gateway
-          image: soninivedit74/gateway:v1.2
+          image: soninivedit74/gateway:v1.3
           envFrom:
             - configMapRef:
                 name: gateway-configmap
