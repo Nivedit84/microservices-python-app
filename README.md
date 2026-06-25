@@ -185,9 +185,10 @@ Through this project I am gaining hands-on experience with:
 - [x] Gateway Tracing
 - [x] Converter Metrics
 - [ ] Converter Tracing
-- [ ] Auth Service Metrics
-- [ ] Notification Service Metrics
-- [ ] Loki Integration
+- [x] Auth Service Metrics
+- [x] Notification Service Metrics
+- [x] Loki Integration
+- [x] Alloy Configuration
 - [ ] Alertmanager
 - [ ] Slack Notifications
 - [ ] Tempo Migration
